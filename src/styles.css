@@ -164,5 +164,76 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+    background-image:
+      radial-gradient(circle at 0% 0%, oklch(0.95 0.05 290 / 0.5), transparent 40%),
+      radial-gradient(circle at 100% 0%, oklch(0.95 0.05 200 / 0.4), transparent 40%);
+    background-attachment: fixed;
+  }
+}
+
+@layer utilities {
+  .gradient-primary { background-image: var(--gradient-primary); }
+  .gradient-success { background-image: var(--gradient-success); }
+  .gradient-warning { background-image: var(--gradient-warning); }
+  .gradient-info    { background-image: var(--gradient-info); }
+  .gradient-pink    { background-image: var(--gradient-pink); }
+  .gradient-teal    { background-image: var(--gradient-teal); }
+  .shadow-soft { box-shadow: var(--shadow-soft); }
+  .shadow-card { box-shadow: var(--shadow-card); }
+  .shadow-pop  { box-shadow: var(--shadow-pop); }
+  .card-3d {
+    background: var(--gradient-surface);
+    box-shadow:
+      0 1px 0 oklch(1 0 0) inset,
+      0 -1px 0 oklch(0.9 0.02 280 / 0.5) inset,
+      0 1px 3px oklch(0.3 0.05 270 / 0.05),
+      0 18px 40px -20px oklch(0.3 0.15 285 / 0.25);
+    transition: transform .35s ease, box-shadow .35s ease;
+  }
+  .card-3d:hover {
+    transform: translateY(-3px);
+    box-shadow:
+      0 1px 0 oklch(1 0 0) inset,
+      0 -1px 0 oklch(0.9 0.02 280 / 0.5) inset,
+      0 24px 50px -20px oklch(0.3 0.18 285 / 0.4);
+  }
+  .kpi-3d {
+    position: relative;
+    overflow: hidden;
+    box-shadow:
+      0 1px 0 oklch(1 0 0 / 0.5) inset,
+      0 -8px 20px -8px oklch(0 0 0 / 0.25) inset,
+      0 14px 30px -12px oklch(0.3 0.2 285 / 0.45);
+    transition: transform .35s ease;
+  }
+  .kpi-3d::before {
+    content: "";
+    position: absolute; inset: 0;
+    background: radial-gradient(120% 80% at 0% 0%, oklch(1 0 0 / 0.35), transparent 50%);
+    pointer-events: none;
+  }
+  .kpi-3d::after {
+    content: "";
+    position: absolute;
+    right: -30px; bottom: -40px;
+    width: 140px; height: 140px;
+    border-radius: 9999px;
+    background: oklch(1 0 0 / 0.12);
+    filter: blur(2px);
+  }
+  .kpi-3d:hover { transform: translateY(-4px) rotateX(2deg); }
+  @keyframes float-y {
+    0%,100% { transform: translateY(0); }
+    50%     { transform: translateY(-6px); }
+  }
+  .animate-float { animation: float-y 4s ease-in-out infinite; }
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+  .shimmer {
+    background-image: linear-gradient(90deg, transparent, oklch(1 0 0 / 0.25), transparent);
+    background-size: 200% 100%;
+    animation: shimmer 3s linear infinite;
   }
 }
