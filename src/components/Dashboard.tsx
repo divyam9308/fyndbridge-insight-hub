@@ -1,4 +1,5 @@
 import { useMemo, useState, type ReactNode } from "react";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import {
   Activity,
   ArrowUpRight,
@@ -118,6 +119,8 @@ export default function Dashboard() {
   const [consultant, setConsultant] = useState(consultants[0]);
   const [period, setPeriod] = useState(periods[0]);
   const [openDD, setOpenDD] = useState(false);
+  const [activeKpi, setActiveKpi] = useState<number | null>(null);
+  const [spinning, setSpinning] = useState<number | null>(null);
 
   const totalClients = useMemo(() => clientStatus.reduce((sum, item) => sum + item.value, 0), []);
   const totalCandidates = useMemo(() => candidateStatus.reduce((sum, item) => sum + item.value, 0), []);
@@ -258,7 +261,20 @@ export default function Dashboard() {
             const isGold = item.gradient === "gradient-warning";
             const textClass = isGold ? "text-[#001264]" : "text-white";
             return (
-              <div key={item.label} className={`kpi-3d ${item.gradient} relative rounded-2xl p-4 ${textClass}`}>
+              <button
+                key={item.label}
+                type="button"
+                onClick={() => {
+                  setSpinning(index);
+                  window.setTimeout(() => {
+                    setActiveKpi(index);
+                    setSpinning(null);
+                  }, 650);
+                }}
+                className={`kpi-3d ${item.gradient} relative rounded-2xl p-4 text-left ${textClass} ${
+                  spinning === index ? "kpi-flip" : ""
+                } cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50`}
+              >
                 <div className="relative z-10 flex items-start justify-between">
                   <div className={`animate-float flex h-10 w-10 items-center justify-center rounded-xl backdrop-blur ${isGold ? "bg-[#001264]/15" : "bg-white/20"}`}>
                     <Icon size={20} />
@@ -279,7 +295,7 @@ export default function Dashboard() {
                 <div className="relative z-10 mt-2 -mx-1">
                   <Spark data={item.data} id={`spark-${index}`} />
                 </div>
-              </div>
+              </button>
             );
           })}
         </div>
@@ -740,6 +756,80 @@ export default function Dashboard() {
           (c) 2026 Fyndbridge ATS - Executive Dashboard - All figures shown are sample data
         </footer>
       </main>
+
+      <Dialog open={activeKpi !== null} onOpenChange={(open) => !open && setActiveKpi(null)}>
+        <DialogContent className="max-w-4xl border-0 bg-transparent p-0 shadow-none">
+          {activeKpi !== null ? (() => {
+            const item = kpis[activeKpi];
+            const Icon = kpiIcons[activeKpi];
+            const isGold = item.gradient === "gradient-warning";
+            const textClass = isGold ? "text-[#001264]" : "text-white";
+            return (
+              <div
+                key={activeKpi}
+                className={`animate-spin-360 kpi-3d ${item.gradient} rounded-3xl p-8 ${textClass}`}
+              >
+                <DialogTitle className="sr-only">{item.label}</DialogTitle>
+                <div className="relative z-10 flex items-start justify-between">
+                  <div className={`flex h-14 w-14 items-center justify-center rounded-2xl backdrop-blur ${isGold ? "bg-[#001264]/15" : "bg-white/20"}`}>
+                    <Icon size={28} />
+                  </div>
+                  <span
+                    className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-semibold ${
+                      item.up ? (isGold ? "bg-[#001264]/15" : "bg-white/25") : "bg-black/20"
+                    }`}
+                  >
+                    {item.up ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
+                    {item.delta} vs last period
+                  </span>
+                </div>
+
+                <div className="relative z-10 mt-6">
+                  <div className="text-[11px] uppercase tracking-[0.2em] opacity-80">{item.label}</div>
+                  <div className="mt-2 text-6xl font-bold tracking-tight">{item.value}</div>
+                </div>
+
+                <div className="relative z-10 mt-6 grid grid-cols-3 gap-3">
+                  {[
+                    { k: "This week", v: "+24" },
+                    { k: "This month", v: item.value },
+                    { k: "Goal", v: "92%" },
+                  ].map((stat) => (
+                    <div
+                      key={stat.k}
+                      className={`rounded-2xl p-4 backdrop-blur ${isGold ? "bg-[#001264]/10" : "bg-white/15"}`}
+                    >
+                      <div className="text-[10px] uppercase tracking-wider opacity-80">{stat.k}</div>
+                      <div className="mt-1 text-2xl font-bold">{stat.v}</div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="relative z-10 mt-6 h-[220px] rounded-2xl bg-white/10 p-3 backdrop-blur">
+                  <ResponsiveContainer>
+                    <AreaChart data={item.data} margin={{ top: 6, right: 6, bottom: 0, left: 0 }}>
+                      <defs>
+                        <linearGradient id={`modal-spark-${activeKpi}`} x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor={isGold ? "#001264" : "white"} stopOpacity={0.55} />
+                          <stop offset="100%" stopColor={isGold ? "#001264" : "white"} stopOpacity={0} />
+                        </linearGradient>
+                      </defs>
+                      <Tooltip contentStyle={{ borderRadius: 12, border: "1px solid var(--border)" }} />
+                      <Area
+                        type="monotone"
+                        dataKey="v"
+                        stroke={isGold ? "#001264" : "white"}
+                        strokeWidth={3}
+                        fill={`url(#modal-spark-${activeKpi})`}
+                      />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+            );
+          })() : null}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
