@@ -258,8 +258,7 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           {kpis.map((item, index) => {
             const Icon = kpiIcons[index];
-            const isGold = item.gradient === "gradient-warning";
-            const textClass = isGold ? "text-[#001264]" : "text-white";
+            const textClass = "text-white";
             return (
               <button
                 key={item.label}
@@ -276,12 +275,12 @@ export default function Dashboard() {
                 } cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50`}
               >
                 <div className="relative z-10 flex items-start justify-between">
-                  <div className={`animate-float flex h-10 w-10 items-center justify-center rounded-xl backdrop-blur ${isGold ? "bg-[#001264]/15" : "bg-white/20"}`}>
+                  <div className="animate-float flex h-10 w-10 items-center justify-center rounded-xl backdrop-blur bg-white/20">
                     <Icon size={20} />
                   </div>
                   <span
                     className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold ${
-                      item.up ? (isGold ? "bg-[#001264]/15" : "bg-white/25") : "bg-black/20"
+                      item.up ? "bg-white/25" : "bg-black/20"
                     }`}
                   >
                     {item.up ? <TrendingUp size={11} /> : <TrendingDown size={11} />}
@@ -762,8 +761,7 @@ export default function Dashboard() {
           {activeKpi !== null ? (() => {
             const item = kpis[activeKpi];
             const Icon = kpiIcons[activeKpi];
-            const isGold = item.gradient === "gradient-warning";
-            const textClass = isGold ? "text-[#001264]" : "text-white";
+            const textClass = "text-white";
             return (
               <div
                 key={activeKpi}
@@ -771,12 +769,12 @@ export default function Dashboard() {
               >
                 <DialogTitle className="sr-only">{item.label}</DialogTitle>
                 <div className="relative z-10 flex items-start justify-between">
-                  <div className={`flex h-14 w-14 items-center justify-center rounded-2xl backdrop-blur ${isGold ? "bg-[#001264]/15" : "bg-white/20"}`}>
+                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl backdrop-blur bg-white/20">
                     <Icon size={28} />
                   </div>
                   <span
                     className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-semibold ${
-                      item.up ? (isGold ? "bg-[#001264]/15" : "bg-white/25") : "bg-black/20"
+                      item.up ? "bg-white/25" : "bg-black/20"
                     }`}
                   >
                     {item.up ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
@@ -797,7 +795,7 @@ export default function Dashboard() {
                   ].map((stat) => (
                     <div
                       key={stat.k}
-                      className={`rounded-2xl p-4 backdrop-blur ${isGold ? "bg-[#001264]/10" : "bg-white/15"}`}
+                      className="rounded-2xl p-4 backdrop-blur bg-white/15"
                     >
                       <div className="text-[10px] uppercase tracking-wider opacity-80">{stat.k}</div>
                       <div className="mt-1 text-2xl font-bold">{stat.v}</div>
@@ -810,15 +808,15 @@ export default function Dashboard() {
                     <AreaChart data={item.data} margin={{ top: 6, right: 6, bottom: 0, left: 0 }}>
                       <defs>
                         <linearGradient id={`modal-spark-${activeKpi}`} x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor={isGold ? "#001264" : "white"} stopOpacity={0.55} />
-                          <stop offset="100%" stopColor={isGold ? "#001264" : "white"} stopOpacity={0} />
+                          <stop offset="0%" stopColor="white" stopOpacity={0.55} />
+                          <stop offset="100%" stopColor="white" stopOpacity={0} />
                         </linearGradient>
                       </defs>
                       <Tooltip contentStyle={{ borderRadius: 12, border: "1px solid var(--border)" }} />
                       <Area
                         type="monotone"
                         dataKey="v"
-                        stroke={isGold ? "#001264" : "white"}
+                        stroke="white"
                         strokeWidth={3}
                         fill={`url(#modal-spark-${activeKpi})`}
                       />
