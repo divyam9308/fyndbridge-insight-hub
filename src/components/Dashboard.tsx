@@ -163,6 +163,11 @@ export default function Dashboard() {
   const [openDD, setOpenDD] = useState(false);
   const [activeKpi, setActiveKpi] = useState<number | null>(null);
   const [spinning, setSpinning] = useState<number | null>(null);
+  const [presenceOpen, setPresenceOpen] = useState(false);
+
+  const onlineEmps = employeePresence.filter((e) => e.status === "online");
+  const idleEmps = employeePresence.filter((e) => e.status === "idle");
+  const offlineEmps = employeePresence.filter((e) => e.status === "offline");
 
   const totalClients = useMemo(() => clientStatus.reduce((sum, item) => sum + item.value, 0), []);
   const totalCandidates = useMemo(() => candidateStatus.reduce((sum, item) => sum + item.value, 0), []);
