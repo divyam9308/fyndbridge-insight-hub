@@ -1,4 +1,5 @@
 import { useMemo, useState, type ReactNode } from "react";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import {
   Activity,
   ArrowUpRight,
@@ -118,6 +119,8 @@ export default function Dashboard() {
   const [consultant, setConsultant] = useState(consultants[0]);
   const [period, setPeriod] = useState(periods[0]);
   const [openDD, setOpenDD] = useState(false);
+  const [activeKpi, setActiveKpi] = useState<number | null>(null);
+  const [spinning, setSpinning] = useState<number | null>(null);
 
   const totalClients = useMemo(() => clientStatus.reduce((sum, item) => sum + item.value, 0), []);
   const totalCandidates = useMemo(() => candidateStatus.reduce((sum, item) => sum + item.value, 0), []);
@@ -258,7 +261,20 @@ export default function Dashboard() {
             const isGold = item.gradient === "gradient-warning";
             const textClass = isGold ? "text-[#001264]" : "text-white";
             return (
-              <div key={item.label} className={`kpi-3d ${item.gradient} relative rounded-2xl p-4 ${textClass}`}>
+              <button
+                key={item.label}
+                type="button"
+                onClick={() => {
+                  setSpinning(index);
+                  window.setTimeout(() => {
+                    setActiveKpi(index);
+                    setSpinning(null);
+                  }, 650);
+                }}
+                className={`kpi-3d ${item.gradient} relative rounded-2xl p-4 text-left ${textClass} ${
+                  spinning === index ? "kpi-flip" : ""
+                } cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50`}
+              >
                 <div className="relative z-10 flex items-start justify-between">
                   <div className={`animate-float flex h-10 w-10 items-center justify-center rounded-xl backdrop-blur ${isGold ? "bg-[#001264]/15" : "bg-white/20"}`}>
                     <Icon size={20} />
@@ -279,7 +295,7 @@ export default function Dashboard() {
                 <div className="relative z-10 mt-2 -mx-1">
                   <Spark data={item.data} id={`spark-${index}`} />
                 </div>
-              </div>
+              </button>
             );
           })}
         </div>
