@@ -165,8 +165,8 @@
     background-color: var(--color-background);
     color: var(--color-foreground);
     background-image:
-      radial-gradient(circle at 0% 0%, rgb(0 18 100 / 0.06), transparent 45%),
-      radial-gradient(circle at 100% 0%, rgb(218 177 17 / 0.07), transparent 45%);
+      radial-gradient(circle at 0% 0%, rgb(139 92 246 / 0.08), transparent 45%),
+      radial-gradient(circle at 100% 0%, rgb(236 72 153 / 0.07), transparent 45%);
     background-attachment: fixed;
   }
 }
@@ -186,8 +186,8 @@
     box-shadow:
       0 1px 0 #ffffff inset,
       0 -1px 0 rgb(226 232 240 / 0.6) inset,
-      0 1px 3px rgb(15 23 42 / 0.04),
-      0 18px 40px -20px rgb(0 18 100 / 0.18);
+      0 1px 3px rgb(45 55 72 / 0.04),
+      0 18px 40px -20px rgb(139 92 246 / 0.18);
     transition: transform .35s ease, box-shadow .35s ease;
   }
   .card-3d:hover {
@@ -195,7 +195,7 @@
     box-shadow:
       0 1px 0 #ffffff inset,
       0 -1px 0 rgb(226 232 240 / 0.6) inset,
-      0 24px 50px -20px rgb(0 18 100 / 0.28);
+      0 24px 50px -20px rgb(139 92 246 / 0.28);
   }
   .kpi-3d {
     position: relative;
@@ -203,7 +203,7 @@
     box-shadow:
       0 1px 0 rgb(255 255 255 / 0.5) inset,
       0 -8px 20px -8px rgb(0 0 0 / 0.22) inset,
-      0 14px 30px -12px rgb(0 18 100 / 0.35);
+      0 14px 30px -12px rgb(139 92 246 / 0.35);
     transition: transform .35s ease;
   }
   .kpi-3d::before {
