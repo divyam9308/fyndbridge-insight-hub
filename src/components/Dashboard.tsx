@@ -21,6 +21,7 @@ import {
   UserCheck,
   UserPlus,
   Users,
+  Wifi,
   Zap,
   type LucideIcon,
 } from "lucide-react";
@@ -61,6 +62,47 @@ import {
 } from "@/data/dashboardMockData";
 
 const kpiIcons = [Building2, Users, Briefcase];
+
+type EmployeePresence = {
+  id: string;
+  name: string;
+  status: "online" | "idle" | "offline";
+  currentPage: string;
+  lastSeenAt: string;
+  loginAt?: string;
+};
+
+const employeePresence: EmployeePresence[] = [
+  { id: "1", name: "Divyam Aggarwal", status: "online", currentPage: "Candidates", lastSeenAt: "active now", loginAt: "9:02 AM" },
+  { id: "2", name: "Ria Ghoshal", status: "online", currentPage: "Mandates", lastSeenAt: "1 min ago", loginAt: "9:14 AM" },
+  { id: "3", name: "Aarohi Sharma", status: "online", currentPage: "Clients", lastSeenAt: "active now", loginAt: "9:28 AM" },
+  { id: "4", name: "Rajneesh Sharma", status: "idle", currentPage: "Dashboard", lastSeenAt: "idle 6 min", loginAt: "8:51 AM" },
+  { id: "5", name: "Karan Mehta", status: "idle", currentPage: "Reports", lastSeenAt: "idle 9 min", loginAt: "9:33 AM" },
+  { id: "6", name: "Neha Kapoor", status: "offline", currentPage: "-", lastSeenAt: "last seen 2:45 PM" },
+  { id: "7", name: "Sahil Verma", status: "offline", currentPage: "-", lastSeenAt: "last seen 1:12 PM" },
+];
+
+const statusMeta = {
+  online: { dot: "bg-emerald-500", ring: "ring-emerald-500/30", pulse: true, label: "Online", pill: "bg-emerald-100 text-emerald-700" },
+  idle: { dot: "bg-amber-400", ring: "ring-amber-400/30", pulse: false, label: "Idle", pill: "bg-amber-100 text-amber-700" },
+  offline: { dot: "bg-slate-400", ring: "ring-slate-400/20", pulse: false, label: "Offline", pill: "bg-slate-100 text-slate-600" },
+} as const;
+
+function StatusDot({ status }: { status: EmployeePresence["status"] }) {
+  const m = statusMeta[status];
+  return (
+    <span className="relative inline-flex h-2.5 w-2.5 shrink-0">
+      {m.pulse ? (
+        <span className={`absolute inline-flex h-full w-full animate-ping rounded-full opacity-60 ${m.dot}`} />
+      ) : null}
+      <span className={`relative inline-flex h-2.5 w-2.5 rounded-full ring-2 ${m.dot} ${m.ring}`} />
+    </span>
+  );
+}
+
+function initials(name: string) {
+  return name.split(" ").map((p) => p[0]).slice(0, 2).join("");
+}
 const activityIcons = [Building2, UserCheck, FileSignature, Briefcase, Award, Clock];
 const activityTimes = ["2m ago", "14m ago", "1h ago", "3h ago", "5h ago", "Today"];
 const activityGradients = [
@@ -121,6 +163,11 @@ export default function Dashboard() {
   const [openDD, setOpenDD] = useState(false);
   const [activeKpi, setActiveKpi] = useState<number | null>(null);
   const [spinning, setSpinning] = useState<number | null>(null);
+  const [presenceOpen, setPresenceOpen] = useState(false);
+
+  const onlineEmps = employeePresence.filter((e) => e.status === "online");
+  const idleEmps = employeePresence.filter((e) => e.status === "idle");
+  const offlineEmps = employeePresence.filter((e) => e.status === "offline");
 
   const totalClients = useMemo(() => clientStatus.reduce((sum, item) => sum + item.value, 0), []);
   const totalCandidates = useMemo(() => candidateStatus.reduce((sum, item) => sum + item.value, 0), []);
@@ -751,6 +798,82 @@ export default function Dashboard() {
           </div>
         </div>
 
+        <div className="grid grid-cols-12 gap-4">
+          <button
+            type="button"
+            onClick={() => setPresenceOpen(true)}
+            className="card-3d col-span-12 rounded-2xl p-5 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+          >
+            <SectionTitle
+              icon={Wifi}
+              title="Employees Online Now"
+              subtitle="Live presence across ATS"
+              right={
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-2.5 py-1 text-[11px] font-semibold text-emerald-700">
+                  <span className="relative inline-flex h-2 w-2">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-70" />
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+                  </span>
+                  LIVE
+                </span>
+              }
+            />
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-12">
+              <div className="md:col-span-3">
+                <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                  Currently online
+                </div>
+                <div className="mt-1 flex items-end gap-2">
+                  <div className="text-4xl font-bold tracking-tight text-foreground">
+                    {onlineEmps.length}
+                  </div>
+                  <div className="mb-1 text-xs text-muted-foreground">
+                    of {employeePresence.length}
+                  </div>
+                </div>
+                <div className="mt-2 text-xs text-muted-foreground">
+                  <span className="font-semibold text-emerald-600">{onlineEmps.length} active</span>
+                  <span className="mx-1">·</span>
+                  <span className="font-semibold text-amber-600">{idleEmps.length} idle</span>
+                </div>
+                <div className="mt-3 flex -space-x-2">
+                  {employeePresence.slice(0, 5).map((e, i) => (
+                    <div
+                      key={e.id}
+                      className={`flex h-8 w-8 items-center justify-center rounded-full ring-2 ring-white text-[10px] font-bold text-white ${
+                        ["gradient-primary", "gradient-info", "gradient-pink", "gradient-teal", "gradient-warning"][i % 5]
+                      }`}
+                    >
+                      {initials(e.name)}
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="md:col-span-9">
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-3">
+                  {employeePresence.slice(0, 5).map((e) => (
+                    <div
+                      key={e.id}
+                      className="flex items-center gap-2.5 rounded-xl border border-border bg-secondary/40 px-3 py-2"
+                    >
+                      <StatusDot status={e.status} />
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="truncate text-xs font-semibold text-foreground">{e.name}</div>
+                          <div className="shrink-0 text-[10px] text-muted-foreground">{e.lastSeenAt}</div>
+                        </div>
+                        <div className="truncate text-[11px] text-muted-foreground">
+                          {e.status === "offline" ? "Offline today" : `on ${e.currentPage}`}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </button>
+        </div>
+
         <footer className="py-4 text-center text-[11px] text-muted-foreground">
           (c) 2026 Fyndbridge ATS - Executive Dashboard - All figures shown are sample data
         </footer>
@@ -826,6 +949,101 @@ export default function Dashboard() {
               </div>
             );
           })() : null}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={presenceOpen} onOpenChange={setPresenceOpen}>
+        <DialogContent className="max-w-3xl border-0 bg-transparent p-0 shadow-none">
+          <div className="animate-spin-360 card-3d rounded-3xl bg-card p-6">
+            <DialogTitle className="sr-only">Employees Activity</DialogTitle>
+            <div className="mb-5 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div className="gradient-primary shadow-pop flex h-11 w-11 items-center justify-center rounded-2xl text-white">
+                  <Wifi size={20} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold tracking-tight">Employees Activity</h3>
+                  <p className="text-xs text-muted-foreground">Live presence across the ATS team</p>
+                </div>
+              </div>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
+                <span className="relative inline-flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-70" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+                </span>
+                LIVE
+              </span>
+            </div>
+
+            <div className="mb-4 grid grid-cols-3 gap-3">
+              {[
+                { k: "Online", v: onlineEmps.length, cls: "from-emerald-500 to-emerald-400" },
+                { k: "Idle", v: idleEmps.length, cls: "from-amber-500 to-amber-400" },
+                { k: "Offline", v: offlineEmps.length, cls: "from-slate-500 to-slate-400" },
+              ].map((s) => (
+                <div
+                  key={s.k}
+                  className={`rounded-2xl bg-gradient-to-br ${s.cls} p-3 text-white shadow-soft`}
+                >
+                  <div className="text-[10px] uppercase tracking-wider opacity-90">{s.k}</div>
+                  <div className="mt-0.5 text-2xl font-bold">{s.v}</div>
+                </div>
+              ))}
+            </div>
+
+            <div className="max-h-[60vh] space-y-4 overflow-y-auto pr-1">
+              {([
+                { title: "Online", list: onlineEmps },
+                { title: "Idle", list: idleEmps },
+                { title: "Offline Today", list: offlineEmps },
+              ] as const).map((group) => (
+                <div key={group.title}>
+                  <div className="mb-2 flex items-center gap-2">
+                    <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                      {group.title}
+                    </h4>
+                    <span className="text-[11px] text-muted-foreground">({group.list.length})</span>
+                    <div className="ml-2 h-px flex-1 bg-border" />
+                  </div>
+                  <div className="space-y-2">
+                    {group.list.map((e) => (
+                      <div
+                        key={e.id}
+                        className="flex items-center gap-3 rounded-xl border border-border bg-secondary/40 px-3 py-2.5"
+                      >
+                        <StatusDot status={e.status} />
+                        <div className="gradient-primary shadow-pop flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-xs font-bold text-white">
+                          {initials(e.name)}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="truncate text-sm font-semibold">{e.name}</div>
+                          <div className="truncate text-[11px] text-muted-foreground">
+                            {e.status === "offline" ? "Not active" : `Viewing ${e.currentPage}`}
+                          </div>
+                        </div>
+                        <div className="hidden text-right sm:block">
+                          <div className="text-[11px] font-medium text-foreground">{e.lastSeenAt}</div>
+                          {e.loginAt ? (
+                            <div className="text-[10px] text-muted-foreground">Login {e.loginAt}</div>
+                          ) : null}
+                        </div>
+                        <span
+                          className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold ${statusMeta[e.status].pill}`}
+                        >
+                          {statusMeta[e.status].label}
+                        </span>
+                      </div>
+                    ))}
+                    {group.list.length === 0 ? (
+                      <div className="rounded-xl border border-dashed border-border p-3 text-center text-xs text-muted-foreground">
+                        No employees in this state.
+                      </div>
+                    ) : null}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
