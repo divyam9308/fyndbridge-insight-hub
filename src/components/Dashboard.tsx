@@ -798,6 +798,82 @@ export default function Dashboard() {
           </div>
         </div>
 
+        <div className="grid grid-cols-12 gap-4">
+          <button
+            type="button"
+            onClick={() => setPresenceOpen(true)}
+            className="card-3d col-span-12 rounded-2xl p-5 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+          >
+            <SectionTitle
+              icon={Wifi}
+              title="Employees Online Now"
+              subtitle="Live presence across ATS"
+              right={
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-2.5 py-1 text-[11px] font-semibold text-emerald-700">
+                  <span className="relative inline-flex h-2 w-2">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-70" />
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+                  </span>
+                  LIVE
+                </span>
+              }
+            />
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-12">
+              <div className="md:col-span-3">
+                <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                  Currently online
+                </div>
+                <div className="mt-1 flex items-end gap-2">
+                  <div className="text-4xl font-bold tracking-tight text-foreground">
+                    {onlineEmps.length}
+                  </div>
+                  <div className="mb-1 text-xs text-muted-foreground">
+                    of {employeePresence.length}
+                  </div>
+                </div>
+                <div className="mt-2 text-xs text-muted-foreground">
+                  <span className="font-semibold text-emerald-600">{onlineEmps.length} active</span>
+                  <span className="mx-1">·</span>
+                  <span className="font-semibold text-amber-600">{idleEmps.length} idle</span>
+                </div>
+                <div className="mt-3 flex -space-x-2">
+                  {employeePresence.slice(0, 5).map((e, i) => (
+                    <div
+                      key={e.id}
+                      className={`flex h-8 w-8 items-center justify-center rounded-full ring-2 ring-white text-[10px] font-bold text-white ${
+                        ["gradient-primary", "gradient-info", "gradient-pink", "gradient-teal", "gradient-warning"][i % 5]
+                      }`}
+                    >
+                      {initials(e.name)}
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="md:col-span-9">
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-3">
+                  {employeePresence.slice(0, 5).map((e) => (
+                    <div
+                      key={e.id}
+                      className="flex items-center gap-2.5 rounded-xl border border-border bg-secondary/40 px-3 py-2"
+                    >
+                      <StatusDot status={e.status} />
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="truncate text-xs font-semibold text-foreground">{e.name}</div>
+                          <div className="shrink-0 text-[10px] text-muted-foreground">{e.lastSeenAt}</div>
+                        </div>
+                        <div className="truncate text-[11px] text-muted-foreground">
+                          {e.status === "offline" ? "Offline today" : `on ${e.currentPage}`}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </button>
+        </div>
+
         <footer className="py-4 text-center text-[11px] text-muted-foreground">
           (c) 2026 Fyndbridge ATS - Executive Dashboard - All figures shown are sample data
         </footer>
