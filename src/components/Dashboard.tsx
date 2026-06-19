@@ -951,6 +951,101 @@ export default function Dashboard() {
           })() : null}
         </DialogContent>
       </Dialog>
+
+      <Dialog open={presenceOpen} onOpenChange={setPresenceOpen}>
+        <DialogContent className="max-w-3xl border-0 bg-transparent p-0 shadow-none">
+          <div className="animate-spin-360 card-3d rounded-3xl bg-card p-6">
+            <DialogTitle className="sr-only">Employees Activity</DialogTitle>
+            <div className="mb-5 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div className="gradient-primary shadow-pop flex h-11 w-11 items-center justify-center rounded-2xl text-white">
+                  <Wifi size={20} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold tracking-tight">Employees Activity</h3>
+                  <p className="text-xs text-muted-foreground">Live presence across the ATS team</p>
+                </div>
+              </div>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
+                <span className="relative inline-flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-70" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+                </span>
+                LIVE
+              </span>
+            </div>
+
+            <div className="mb-4 grid grid-cols-3 gap-3">
+              {[
+                { k: "Online", v: onlineEmps.length, cls: "from-emerald-500 to-emerald-400" },
+                { k: "Idle", v: idleEmps.length, cls: "from-amber-500 to-amber-400" },
+                { k: "Offline", v: offlineEmps.length, cls: "from-slate-500 to-slate-400" },
+              ].map((s) => (
+                <div
+                  key={s.k}
+                  className={`rounded-2xl bg-gradient-to-br ${s.cls} p-3 text-white shadow-soft`}
+                >
+                  <div className="text-[10px] uppercase tracking-wider opacity-90">{s.k}</div>
+                  <div className="mt-0.5 text-2xl font-bold">{s.v}</div>
+                </div>
+              ))}
+            </div>
+
+            <div className="max-h-[60vh] space-y-4 overflow-y-auto pr-1">
+              {([
+                { title: "Online", list: onlineEmps },
+                { title: "Idle", list: idleEmps },
+                { title: "Offline Today", list: offlineEmps },
+              ] as const).map((group) => (
+                <div key={group.title}>
+                  <div className="mb-2 flex items-center gap-2">
+                    <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                      {group.title}
+                    </h4>
+                    <span className="text-[11px] text-muted-foreground">({group.list.length})</span>
+                    <div className="ml-2 h-px flex-1 bg-border" />
+                  </div>
+                  <div className="space-y-2">
+                    {group.list.map((e) => (
+                      <div
+                        key={e.id}
+                        className="flex items-center gap-3 rounded-xl border border-border bg-secondary/40 px-3 py-2.5"
+                      >
+                        <StatusDot status={e.status} />
+                        <div className="gradient-primary shadow-pop flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-xs font-bold text-white">
+                          {initials(e.name)}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="truncate text-sm font-semibold">{e.name}</div>
+                          <div className="truncate text-[11px] text-muted-foreground">
+                            {e.status === "offline" ? "Not active" : `Viewing ${e.currentPage}`}
+                          </div>
+                        </div>
+                        <div className="hidden text-right sm:block">
+                          <div className="text-[11px] font-medium text-foreground">{e.lastSeenAt}</div>
+                          {e.loginAt ? (
+                            <div className="text-[10px] text-muted-foreground">Login {e.loginAt}</div>
+                          ) : null}
+                        </div>
+                        <span
+                          className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold ${statusMeta[e.status].pill}`}
+                        >
+                          {statusMeta[e.status].label}
+                        </span>
+                      </div>
+                    ))}
+                    {group.list.length === 0 ? (
+                      <div className="rounded-xl border border-dashed border-border p-3 text-center text-xs text-muted-foreground">
+                        No employees in this state.
+                      </div>
+                    ) : null}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
