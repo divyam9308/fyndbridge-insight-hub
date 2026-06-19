@@ -61,6 +61,47 @@ import {
 } from "@/data/dashboardMockData";
 
 const kpiIcons = [Building2, Users, Briefcase];
+
+type EmployeePresence = {
+  id: string;
+  name: string;
+  status: "online" | "idle" | "offline";
+  currentPage: string;
+  lastSeenAt: string;
+  loginAt?: string;
+};
+
+const employeePresence: EmployeePresence[] = [
+  { id: "1", name: "Divyam Aggarwal", status: "online", currentPage: "Candidates", lastSeenAt: "active now", loginAt: "9:02 AM" },
+  { id: "2", name: "Ria Ghoshal", status: "online", currentPage: "Mandates", lastSeenAt: "1 min ago", loginAt: "9:14 AM" },
+  { id: "3", name: "Aarohi Sharma", status: "online", currentPage: "Clients", lastSeenAt: "active now", loginAt: "9:28 AM" },
+  { id: "4", name: "Rajneesh Sharma", status: "idle", currentPage: "Dashboard", lastSeenAt: "idle 6 min", loginAt: "8:51 AM" },
+  { id: "5", name: "Karan Mehta", status: "idle", currentPage: "Reports", lastSeenAt: "idle 9 min", loginAt: "9:33 AM" },
+  { id: "6", name: "Neha Kapoor", status: "offline", currentPage: "-", lastSeenAt: "last seen 2:45 PM" },
+  { id: "7", name: "Sahil Verma", status: "offline", currentPage: "-", lastSeenAt: "last seen 1:12 PM" },
+];
+
+const statusMeta = {
+  online: { dot: "bg-emerald-500", ring: "ring-emerald-500/30", pulse: true, label: "Online", pill: "bg-emerald-100 text-emerald-700" },
+  idle: { dot: "bg-amber-400", ring: "ring-amber-400/30", pulse: false, label: "Idle", pill: "bg-amber-100 text-amber-700" },
+  offline: { dot: "bg-slate-400", ring: "ring-slate-400/20", pulse: false, label: "Offline", pill: "bg-slate-100 text-slate-600" },
+} as const;
+
+function StatusDot({ status }: { status: EmployeePresence["status"] }) {
+  const m = statusMeta[status];
+  return (
+    <span className="relative inline-flex h-2.5 w-2.5 shrink-0">
+      {m.pulse ? (
+        <span className={`absolute inline-flex h-full w-full animate-ping rounded-full opacity-60 ${m.dot}`} />
+      ) : null}
+      <span className={`relative inline-flex h-2.5 w-2.5 rounded-full ring-2 ${m.dot} ${m.ring}`} />
+    </span>
+  );
+}
+
+function initials(name: string) {
+  return name.split(" ").map((p) => p[0]).slice(0, 2).join("");
+}
 const activityIcons = [Building2, UserCheck, FileSignature, Briefcase, Award, Clock];
 const activityTimes = ["2m ago", "14m ago", "1h ago", "3h ago", "5h ago", "Today"];
 const activityGradients = [
