@@ -255,15 +255,17 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           {kpis.map((item, index) => {
             const Icon = kpiIcons[index];
+            const isGold = item.gradient === "gradient-warning";
+            const textClass = isGold ? "text-[#001264]" : "text-white";
             return (
-              <div key={item.label} className={`kpi-3d ${item.gradient} relative rounded-2xl p-4 text-white`}>
+              <div key={item.label} className={`kpi-3d ${item.gradient} relative rounded-2xl p-4 ${textClass}`}>
                 <div className="relative z-10 flex items-start justify-between">
-                  <div className="animate-float flex h-10 w-10 items-center justify-center rounded-xl bg-white/20 backdrop-blur">
+                  <div className={`animate-float flex h-10 w-10 items-center justify-center rounded-xl backdrop-blur ${isGold ? "bg-[#001264]/15" : "bg-white/20"}`}>
                     <Icon size={20} />
                   </div>
                   <span
                     className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold ${
-                      item.up ? "bg-white/25" : "bg-black/20"
+                      item.up ? (isGold ? "bg-[#001264]/15" : "bg-white/25") : "bg-black/20"
                     }`}
                   >
                     {item.up ? <TrendingUp size={11} /> : <TrendingDown size={11} />}
