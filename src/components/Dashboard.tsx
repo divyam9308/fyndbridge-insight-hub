@@ -21,6 +21,7 @@ import {
   UserCheck,
   UserPlus,
   Users,
+  Wifi,
   Zap,
   type LucideIcon,
 } from "lucide-react";
